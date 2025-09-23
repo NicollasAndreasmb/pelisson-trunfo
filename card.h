@@ -1,3 +1,6 @@
+#ifndef CARD_H
+#define CARD_H
+
 #include <string>
 
 struct Card{
@@ -8,3 +11,5 @@ struct Card{
     int preco;
     std::string grupo;
 };
+
+#endif // CARD_H

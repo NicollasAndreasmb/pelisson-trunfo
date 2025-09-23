@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 
@@ -88,7 +89,7 @@ void fullDeck::Replace(int p, Card x){
         abort();
     }
 
-    if (p <= 0 || p > count + 1){
+    if (p <= 0 || p > count){
         cout << "Posicao invalida" << endl;
         abort();
     }
@@ -134,4 +135,25 @@ void fullDeck::PegaCartas(){
     }
 
     file.close();
+}
+
+void fullDeck::DistribuirCartas(playerDeck &jogador, playerDeck &maquina){
+    srand(static_cast<unsigned int>(time(nullptr)));
+    for (int i = count; i > 1; i--){
+        int j = rand() % i + 1;
+        Card tempI, tempJ;
+        Retrive(i,tempI);
+        Retrive(j, tempJ);
+        Replace(i, tempJ);
+        Replace(j, tempI);
+    }
+    for (int i = 1; i<=count; i++){
+        Card carta;
+        Retrive(i, carta);
+        if (i % 2 !=0) {
+            jogador.Append(carta); 
+        }else{
+            maquina.Append(carta);
+        }
+    }
 }
