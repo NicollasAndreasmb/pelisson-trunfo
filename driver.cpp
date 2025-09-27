@@ -1,46 +1,53 @@
-#include "fullDeck.h"
-#include "playerDeck.h"
-#include <iostream>
+/*
+===============================================================================
+    Projeto: Super Trunfo (Implementação em C++)
+    Disciplina: Estrutura de Dados
+    Professor: FELIPE CARVALHO PELLISON
+    Autores: NICOLLAS ANDREAS MARQUES BARROS
+             MISAEL FLEURI PILHERI
+             JOSÉ HENRIQUE BATISTA BORGES
+             JOÃO VICTOR MUTTON PIRES
+    Grupo: Semestre 4/B - G5
 
-using namespace std;
+    Descrição Geral:
+    ---------------------------------------------------------------------------
+    Este programa implementa uma versão digital do clássico jogo "Super Trunfo",
+    desenvolvido como exercício prático da disciplina de Estrutura de Dados.
+    O objetivo do jogo é simular fielmente as regras originais utilizando
+    estruturas de dados básicas (Lista e Fila), sem o uso de bibliotecas STL,
+    respeitando restrições de memória e modularidade.
 
-int main(){
-    fullDeck deckPrincipal;
-    playerDeck jogador, maquina;
+    Estrutura do Projeto:
+    ---------------------------------------------------------------------------
+    - card.h: define a estrutura de dados que representa cada carta.
+    - fullDeck.h/.cpp: implementa a lista estática contendo as 32 cartas originais
+      carregadas a partir do arquivo CSV.
+    - playerDeck.h/.cpp: implementa a fila estática circular, representando
+      o baralho de cada jogador durante a partida.
+    - game.h/.cpp: contém a lógica principal do jogo, incluindo distribuição
+      das cartas, comparação de atributos e controle de rodadas.
+    - driver.cpp: ponto de entrada do programa; inicializa e executa a partida.
 
-    deckPrincipal.PegaCartas();
+    Regras Implementadas:
+    ---------------------------------------------------------------------------
+    1) As 32 cartas são embaralhadas e distribuídas igualmente (16/16).
+    2) Em cada rodada, os jogadores comparam atributos das cartas do topo.
+       - Peso bruto e Preço: vence o menor valor.
+       - Cilindrada e Potência: vence o maior valor.
+    3) O vencedor recebe ambas as cartas, colocando-as no final do seu baralho.
+    4) O jogo segue até que um dos jogadores fique sem cartas.
 
-    deckPrincipal.DistribuirCartas(jogador,maquina);
+    Observações:
+    ---------------------------------------------------------------------------
+    - Implementação em C++ puro, sem containers da STL.
+    - Uso de arrays estáticos para otimizar memória.
+    - Organização modular para facilitar manutenção e compreensão.
 
-    cout<< "Cartas do Jogador:" << endl;
-    for(int i = 0; i < jogador.Size(); i++){
-        Card carta;
-        jogador.GetFront(carta);
-        cout << carta.modelo << "|"
-             << carta.grupo << "|"
-             << "Peso: " << carta.pesoBruto << "|"
-             << "Cilindrada: " << carta.cilindrada << "|"
-             << "Potencia: " << carta.potencia << "|"
-             << "Preco: " << carta.preco << endl;
-
-             jogador.Serve(carta);
-             jogador.Append(carta);
-    }
-    
-    cout << "\nCartas da Máquina:" << endl;
-    for (int i = 0; i < maquina.Size(); i++){
-        Card carta;
-        maquina.GetFront(carta);
-        cout << carta.modelo << "|"
-             << carta.grupo << "|"
-             << "Peso: " << carta.pesoBruto << "|"
-             << "Cilindrada: " << carta.cilindrada << "|"
-             << "Potencia: " << carta.potencia << "|"
-             << "Preco: " << carta.preco << endl;
-
-        maquina.Serve(carta);
-        maquina.Append(carta);
-    }
-
+===============================================================================
+*/
+#include "game.h"
+int main() {
+    Jogo partida;
+    partida.iniciar();
     return 0;
 }
