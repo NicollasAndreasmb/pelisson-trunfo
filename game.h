@@ -11,7 +11,7 @@ class Jogo {
 
         void distribuirCartas();
         void rodada(int rodadaNum);
-        int compararAtributo(Card c1, Card c2, int atributo);
+        int compararAtributo(const Card &c1, const Card &c2, int atributo);
     public: 
         Jogo();
         void iniciar();

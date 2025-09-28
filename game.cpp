@@ -13,18 +13,12 @@ Jogo::Jogo() {
 }
 
 void Jogo::distribuirCartas() {
-    int total = baralho.Size();
-    for (int i = 1; i <= total; ++i) {
-        Card temp;
-        baralho.Retrive(i, temp);
-        if (i % 2 == 1) p1.Append(temp);
-        else p2.Append(temp);
-    }
+    baralho.DistribuirCartas(p1, p2);
 }
 
 int Jogo::compararAtributo(const Card &a, const Card &b, int atributo) {
-    if (a.grupo == "1A" && b.grupo != "1A") return 1;
-    if (b.grupo == "1A" && a.grupo != "1A") return 2;
+    if (a.grupo == "1A" && b.grupo.find('A')) return 2;
+    if (b.grupo == "1A" && a.grupo.find('A')) return 1;
 
     switch (atributo) {
         case 1:
@@ -44,7 +38,7 @@ int Jogo::compararAtributo(const Card &a, const Card &b, int atributo) {
             if (b.preco < a.preco) return 2;
             break;
         default:
-            break;
+            return 3;
     }
     return 0; 
 }
@@ -72,9 +66,6 @@ void Jogo::rodada(int rodadaNum) {
          << " | Potencia: " << carta1.potencia
          << " | Preco: " << carta1.preco << "\n";
 
-    cout << "\nCarta do adversario:\n";
-    cout << "  Modelo: " << carta2.modelo << " | Grupo: " << carta2.grupo << "\n";
-
     int atributo = 0;
     int resultado = 0;
     do {
@@ -86,20 +77,24 @@ void Jogo::rodada(int rodadaNum) {
         cout << "Selecione (1-4): ";
         cin >> atributo;
 
-        resultado = compararCartas(carta1, carta2, atributo);
+        resultado = compararAtributo(carta1, carta2, atributo);
         if (resultado == 0) {
             cout << "\nEmpate no atributo escolhido. Selecione outro atributo para desempatar.\n";
+        } else if (resultado == 3){
+            cout << "\nDigite um valor valido\n";
         }
-    } while (resultado == 0);
+    } while (resultado == 0 || resultado == 3);
 
     p1.Serve(carta1);
     p2.Serve(carta2);
 
     cout << "\nAtributos do adversário revelados:\n";
-    cout << "  Peso: " << carta2.pesoBruto
+    cout << "   Modelo: " << carta2.modelo
+         << " | Peso: " << carta2.pesoBruto
          << " | Cilindrada: " << carta2.cilindrada
          << " | Potencia: " << carta2.potencia
-         << " | Preco: " << carta2.preco << "\n";
+         << " | Preco: " << carta2.preco
+         << " | Grupo: " << carta2.grupo << endl;
 
     if (resultado == 1) {
         cout << "\n>> Você venceu a rodada! As cartas irão para o final do seu deck.\n";
