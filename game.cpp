@@ -1,3 +1,4 @@
+// game.cpp
 #include "game.h"
 #include <iostream>
 #include <cstdlib>
@@ -5,15 +6,15 @@
 
 using namespace std;
 
-Jogo::Jogo(){
-    srand(time(NULL));
+Jogo::Jogo() {
+    srand((unsigned) time(NULL));
     baralho.PegaCartas();
     distribuirCartas();
 }
 
-
-void Jogo::distribuirCartas(){
-    for (int i = 1; i <= baralho.Size(); i++){
+void Jogo::distribuirCartas() {
+    int total = baralho.Size();
+    for (int i = 1; i <= total; ++i) {
         Card temp;
         baralho.Retrive(i, temp);
         if (i % 2 == 1) p1.Append(temp);
@@ -21,81 +22,97 @@ void Jogo::distribuirCartas(){
     }
 }
 
-int Jogo::compararAtributo(Card c1, Card c2, int atributo){
-    switch (atributo){
-        case 1: if (c1.pesoBruto < c2.pesoBruto) return 1; if (c2.pesoBruto < c1.pesoBruto) return 2; break;
-        case 2: if (c1.cilindrada > c2.cilindrada) return 1; if (c2.cilindrada > c1.cilindrada) return 2; break;
-        case 3: if (c1.potencia > c2.potencia) return 1; if (c2.potencia > c1.potencia) return 2; break;
-        case 4: if (c1.preco < c2.preco) return 1; if (c2.preco < c1.preco) return 2; break;
+int Jogo::compararAtributo(const Card &a, const Card &b, int atributo) {
+    if (a.grupo == "1A" && b.grupo != "1A") return 1;
+    if (b.grupo == "1A" && a.grupo != "1A") return 2;
+
+    switch (atributo) {
+        case 1:
+            if (a.pesoBruto < b.pesoBruto) return 1;
+            if (b.pesoBruto < a.pesoBruto) return 2;
+            break;
+        case 2:
+            if (a.cilindrada > b.cilindrada) return 1;
+            if (b.cilindrada > a.cilindrada) return 2;
+            break;
+        case 3:
+            if (a.potencia > b.potencia) return 1;
+            if (b.potencia > a.potencia) return 2;
+            break;
+        case 4: 
+            if (a.preco < b.preco) return 1;
+            if (b.preco < a.preco) return 2;
+            break;
+        default:
+            break;
     }
-    return 0;
+    return 0; 
 }
 
-void Jogo::rodada(int rodadaNum){
+void Jogo::rodada(int rodadaNum) {
     if (p1.Empty()) {
-        cout << "\n=== O Computador Venceu! ===" << endl;
+        cout << "\n=== O computador venceu o jogo! ===\n";
         return;
     }
-     if (p2.Empty()) {
-        cout << "\n=== O Computador Venceu! ===" << endl;
+    if (p2.Empty()) {
+        cout << "\n=== Parabéns — você venceu o jogo! ===\n";
         return;
     }
 
-    cout << "\n===== Rodada " << rodadaNum << " =====" << endl;
+    cout << "\n===== Rodada " << rodadaNum << " =====\n";
 
     Card carta1, carta2;
     p1.GetFront(carta1);
     p2.GetFront(carta2);
 
-
-    cout << "\nSua carta: " << carta1.modelo
-         << " | Peso: " << carta1.pesoBruto
+    cout << "\nSua carta:\n";
+    cout << "  Modelo: " << carta1.modelo << " | Grupo: " << carta1.grupo << "\n";
+    cout << "  Peso: " << carta1.pesoBruto
          << " | Cilindrada: " << carta1.cilindrada
          << " | Potencia: " << carta1.potencia
-         << " | Preco: " << carta1.preco
-         << " | Grupo: " << carta1.grupo << endl;
+         << " | Preco: " << carta1.preco << "\n";
 
-    cout << "Carta do adversario: " << carta2.modelo << " | Grupo: " << carta2.grupo << endl;
+    cout << "\nCarta do adversario:\n";
+    cout << "  Modelo: " << carta2.modelo << " | Grupo: " << carta2.grupo << "\n";
 
-    int atributo;
-    cout << "\nEscolha um atributo (1=Peso | 2=Cilindrada | 3=Potencia | 4=Preco): ";
-    cin >> atributo;
+    int atributo = 0;
+    int resultado = 0;
+    do {
+        cout << "\nEscolha um atributo para comparar:\n";
+        cout << " 1 = Peso (menor vence)\n";
+        cout << " 2 = Cilindrada (maior vence)\n";
+        cout << " 3 = Potencia (maior vence)\n";
+        cout << " 4 = Preco (menor vence)\n";
+        cout << "Selecione (1-4): ";
+        cin >> atributo;
+
+        resultado = compararCartas(carta1, carta2, atributo);
+        if (resultado == 0) {
+            cout << "\nEmpate no atributo escolhido. Selecione outro atributo para desempatar.\n";
+        }
+    } while (resultado == 0);
 
     p1.Serve(carta1);
     p2.Serve(carta2);
 
-    int vencedor = compararAtributo(carta1, carta2, atributo);
-
-
-    if (vencedor == 0) {
-        cout << "\nEmpate! Nova rodada." << endl;
-        p1.Append(carta1);
-        p2.Append(carta2);
-        rodada(rodadaNum + 1);
-        return;
-    }
-
-    cout << "\nCarta adversaria revelada: " << carta2.modelo
-         << " | Peso: " << carta2.pesoBruto
+    cout << "\nAtributos do adversário revelados:\n";
+    cout << "  Peso: " << carta2.pesoBruto
          << " | Cilindrada: " << carta2.cilindrada
          << " | Potencia: " << carta2.potencia
-         << " | Preco: " << carta2.preco
-         << " | Grupo: " << carta2.grupo << endl;
+         << " | Preco: " << carta2.preco << "\n";
 
-    if (vencedor == 1) {
-        cout << "\n>> Voce venceu a rodada!" << endl;
-        p1.Append(carta2);
-        p1.Append(carta1);
+    if (resultado == 1) {
+        cout << "\n>> Você venceu a rodada! As cartas irão para o final do seu deck.\n";
+        p1.PegarCartaVencedor(carta1, carta2);
     } else {
-        cout << "\n>> Computador venceu a rodada!" << endl;
-        p2.Append(carta1);
-        p2.Append(carta2);
+        cout << "\n>> Computador venceu a rodada! As cartas irão para o final do deck do computador.\n";
+        p2.PegarCartaVencedor(carta2, carta1);
     }
 
     rodada(rodadaNum + 1);
 }
 
 void Jogo::iniciar() {
-    cout << "=== Super Trunfo iniciado! ===" << endl;
+    cout << "=== Super Trunfo — Iniciando partida ===\n";
     rodada(1);
 }
