@@ -25,7 +25,6 @@ void Jogo::distribuirCartas() {
 
 int Jogo::compararAtributo(const Card &a, const Card &b, int atributo) {
     if (a.grupo == "1A") {
-        if (b.grupo == "1A") return 0;
         if (b.grupo.find('A') != string::npos) return 2;
         return 1;
     }
@@ -86,7 +85,6 @@ void Jogo::rodada() {
         int atributo = 0;
         int resultado = 0;
 
-        // NOVO: comparação automática quando houver SUPER TRUNFO (1A)
         if (carta1.grupo == "1A" || carta2.grupo == "1A") {
             cout << "\nImportante >> CARTA SUPER TRUNFO detectada! Comparação automática.\n";
             resultado = compararAtributo(carta1, carta2, 1);
@@ -127,15 +125,6 @@ void Jogo::rodada() {
             << " | Potencia: " << carta2.potencia
             << " | Preco: " << carta2.preco
             << " | Grupo: " << carta2.grupo << endl;
-
-        // NOVO: tratamento de empate (inclui 1A vs 1A) -> próxima rodada
-        if (resultado == 0) {
-            cout << "\nEmpate! Nova rodada.\n";
-            p1.Append(carta1);
-            p2.Append(carta2);
-            rodadaNum++;
-            continue;
-        }
 
         if (resultado == 1) {
             cout << "\n>> Você venceu a rodada! As cartas irão para o final do seu deck.\n";
